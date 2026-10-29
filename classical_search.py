@@ -49,54 +49,29 @@ def print_map():
 
 
 def valid_cell(row,col):
-	return row>=0 and row<len( current_map) and col>=0 and col<len( current_map[0]) and current_map[row][col] is not WALL_SYMBOL and current_map[row][col] is not VISITED_CELL_SYMBOL
+	return row>=0 and row<len(current_map) and col>=0 and col<len(current_map[0]) and current_map[row][col] is not WALL_SYMBOL and current_map[row][col] is not VISITED_CELL_SYMBOL
 
 def generate_adjacent_cells(agent_row, agent_col):
 
+	directions = [
+		( 0, -1), # left
+		( 0, 1), # right
+		(-1, 0), # above
+		( 1, 0), # below
+		(-1, -1), # above-left
+		(-1, 1), # above-right
+		(1, -1), # below-left
+		( 1, 1),  # below-right
+	]
 
-	# Defining the order of adjacent cells expanding by the agent for BFS and DFS algorithms.
 	adjacent_cells_row = []
 	adjacent_cells_col = []
 
-	# Calculate the position of adjacent cells around the agent for later exploration by DFS or BFS.
-	left_of_agent_row = agent_row
-	left_of_agent_col = agent_col - 1
-	right_of_agent_row = agent_row
-	right_of_agent_col = agent_col + 1
-	above_agent_row = agent_row - 1
-	above_agent_col = agent_col
-	below_agent_row = agent_row + 1
-	below_agent_col = agent_col
+	for row_offset, col_offset in directions:
+		adjacent_cells_row.append(agent_row + row_offset)
+		adjacent_cells_col.append(agent_col + col_offset)
 
-	# Calculate the diagonal positions.
-	above_left_row = agent_row - 1
-	above_left_col = agent_col - 1
-	above_right_row = agent_row - 1
-	above_right_col = agent_col + 1
-	below_left_row = agent_row + 1
-	below_left_col = agent_col - 1
-	below_right_row = agent_row + 1
-	below_right_col = agent_col + 1
-
-	# Append positions in the expansion order used by BFS and DFS.
-	adjacent_cells_row.append(left_of_agent_row)
-	adjacent_cells_col.append(left_of_agent_col)
-	adjacent_cells_row.append(right_of_agent_row)
-	adjacent_cells_col.append(right_of_agent_col)
-	adjacent_cells_row.append(above_agent_row)
-	adjacent_cells_col.append(above_agent_col)
-	adjacent_cells_row.append(below_agent_row)
-	adjacent_cells_col.append(below_agent_col)
-	adjacent_cells_row.append(above_left_row)
-	adjacent_cells_col.append(above_left_col)
-	adjacent_cells_row.append(above_right_row)
-	adjacent_cells_col.append(above_right_col)
-	adjacent_cells_row.append(below_left_row)
-	adjacent_cells_col.append(below_left_col)
-	adjacent_cells_row.append(below_right_row)
-	adjacent_cells_col.append(below_right_col)
-
-	return [adjacent_cells_row, adjacent_cells_col] # returning the list of generated adjacent cells for DFS and BFS
+	return adjacent_cells_row, adjacent_cells_col
 
 def BFS(agent_start_row, agent_start_col):
 	#Add the initial position of the agent to queue
@@ -141,7 +116,7 @@ def BFS(agent_start_row, agent_start_col):
 
 
 def DFS(agent_row, agent_col):
-	#Check if the current state is goal state
+	# Check if the current state is goal state
 	if agent_row == goal_coord[0] and agent_col == goal_coord[1]:
 		print_map()
 		return True
@@ -151,7 +126,7 @@ def DFS(agent_row, agent_col):
 	adjacent_cells_row = adjacent_cells[0]
 	adjacent_cells_col = adjacent_cells[1]
 
-	#Set the status of adjacent cells of agent to expanded and not visited
+	# Set the status of adjacent cells of agent to expanded and not visited
 	for i in range(len(adjacent_cells_row)):
 		if valid_cell(adjacent_cells_row[i],adjacent_cells_col[i]):
 			current_map[adjacent_cells_row[i]][adjacent_cells_col[i]] = EXPANDED_NOT_VISITED_CELL_SYMBOL
@@ -159,14 +134,14 @@ def DFS(agent_row, agent_col):
 	print_map()
 	time.sleep(print_rate_per_sec)
 
-	#Set the status of current agent cell to visited
+	# Set the status of current agent cell to visited
 	current_map[agent_row][agent_col] = VISITED_CELL_SYMBOL
 	for i in range(len(adjacent_cells_row)):
 		#Check if the adjacent cell is not visited before and not wall
 		if valid_cell(adjacent_cells_row[i],adjacent_cells_col[i]):
-			#Move the agent to the new adjacent cell and change its status
+			# Move the agent to the new adjacent cell and change its status
 			current_map[adjacent_cells_row[i]][adjacent_cells_col[i]] = AGENT_SYMBOL
-			#Run DFS for the new state recursively
+			# Run DFS for the new state recursively
 			res = DFS(adjacent_cells_row[i],adjacent_cells_col[i])
 			if res == True:
 				return res

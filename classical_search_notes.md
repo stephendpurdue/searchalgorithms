@@ -4,7 +4,7 @@
 
 (iii) Run DFS. How many expansions until the goal is found? - Done (22)
 
-(iv) Implement BFS and run it. Which algorithm finds the goal earlier, i.e. less expansions? 
+(iv) Implement BFS and run it. Which algorithm finds the goal earlier, i.e. less expansions? - DFS was quicker, it took 22 expansions, wheras BFS took 24.
 
 (v) Change the code in a way that the agent can move into diagonal cells (you can consider any orders for the expansion). 
 
