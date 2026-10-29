@@ -98,30 +98,49 @@ def generate_adjacent_cells(agent_row, agent_col):
 
 	return [adjacent_cells_row, adjacent_cells_col] # returning the list of generated adjacent cells for DFS and BFS
 
-def BFS(agent_start_row,agent_start_col):
+def BFS(agent_start_row, agent_start_col):
 	#Add the initial position of the agent to queue
 	Q = queue.Queue()
-	Q.put([agent_start_row,agent_start_col])
+	Q.put([agent_start_row, agent_start_col])
 
 	while not Q.empty():
-            pass
-
+            
 		# Retrieve the head of queue as the next position of the agent to explore
+		agent_current_pos = Q.get()
+		agent_row = agent_current_pos[0]
+		agent_col = agent_current_pos[1]
 
 		# Set the status of the cell as the agent is there
+		current_map[agent_row][agent_col] = AGENT_SYMBOL
 
 		# Check whether the agent has found the goal
 
+		if agent_row == goal_coord[0] and agent_col == goal_coord[1]:
+			print_map()
+			return True
+		
 		# Calculate the position of agent adjacent cells for exploration
+		adjacent_cells = generate_adjacent_cells(agent_row, agent_col)
+		adjacent_cells_row = adjacent_cells[0]
+		adjacent_cells_col = adjacent_cells[1]
 
-		# check if the adjacent cells are valid (not wall and not visited before) and add them to the queue for further search
+		# Check if the adjacent cells are valid (not wall and not visited before) and add them to the queue for further search
+
+		for i in range(len(adjacent_cells_row)):
+			if valid_cell(adjacent_cells_row[i], adjacent_cells_col[i]) and current_map[adjacent_cells_row[i]][adjacent_cells_col[i]] is not EXPANDED_NOT_VISITED_CELL_SYMBOL:
+				current_map[adjacent_cells_row[i]][adjacent_cells_col[i]] = EXPANDED_NOT_VISITED_CELL_SYMBOL
+				Q.put([adjacent_cells_row[i], adjacent_cells_col[i]])
+
+		print_map()
+		time.sleep(print_rate_per_sec)
 
 		#Set the current status of the agent cell to visited
+		current_map[agent_start_row][agent_start_col] = VISITED_CELL_SYMBOL
 	
-	# return False
+	return False
 
 
-def DFS(agent_row,agent_col):
+def DFS(agent_row, agent_col):
 	#Check if the current state is goal state
 	if agent_row == goal_coord[0] and agent_col == goal_coord[1]:
 		print_map()
