@@ -446,13 +446,31 @@ class ManhattanMaxHeuristic(Heuristic):
     def __init__(self, grid):
         # Call the super constructor to initialize the grid and coin_location
         # variables:
+        self.grid = grid
+        self.coin_locations = grid.get_coin_locations()
         super(ManhattanMaxHeuristic, self).__init__(grid)
 
     def __call__(self, state):
         assert(isinstance(state, State))
-        # The actual heuristic computation.
-        # TODO
-        raise NotImplemented("ManhattanMaxHeuristic has not been implemented yet")
+
+        # Creates an empty list for distances
+        distances = []
+
+        # Gets the id of each coin on the grid
+        for coin_x, coin_y in self.coin_locations:
+            coin_id = self.grid.get_coin_id(coin_x, coin_y)
+
+            # If the coin is not collected, calculate position and append to the list
+            if coin_id not in state.coins_collected:
+                distance = abs(state.x - coin_x) + abs(state.y - coin_y)
+                distances.append(distance)
+
+        # Return 0 if empty
+        if not distances:
+            return 0
+
+        # Return max distance
+        return max(distances)
 
 
 class ManhattanSumHeuristic(Heuristic):
@@ -464,6 +482,8 @@ class ManhattanSumHeuristic(Heuristic):
     def __init__(self, grid):
         # Call the super constructor to initialize the grid and coin_location
         # variables:
+        self.grid = grid
+        self.coin_locations = grid.get_coin_locations()
         super(ManhattanSumHeuristic, self).__init__(grid)
 
     def __call__(self, state):
@@ -481,6 +501,8 @@ class ManhattanOrderedSumHeuristic(Heuristic):
     def __init__(self, grid):
         # Call the super constructor to initialize the grid and coin_location
         # variables:
+        self.grid = grid
+        self.coin_locations = grid.get_coin_locations()
         super(ManhattanOrderedSumHeuristic, self).__init__(grid)
 
     def __call__(self, state):
@@ -497,6 +519,8 @@ class CallMeFancyHeuristic(Heuristic):
     def __init__(self, grid):
         # Call the super constructor to initialize the grid and coin_location
         # variables:
+        self.grid = grid
+        self.coin_locations = grid.get_coin_locations()
         super(CallMeFancyHeuristic, self).__init__(grid)
         # You may do any additional initialization / precomputation steps at
         # this point.
