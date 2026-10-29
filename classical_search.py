@@ -48,8 +48,19 @@ def print_map():
 		print(s1)
 
 
-def valid_cell(row,col):
-	return row>=0 and row<len(current_map) and col>=0 and col<len(current_map[0]) and current_map[row][col] is not WALL_SYMBOL and current_map[row][col] is not VISITED_CELL_SYMBOL
+def valid_cell(row, col):
+	return row>=0 and row<len(current_map) and col>=0 and col<len(current_map[0]) and current_map[row][col] != WALL_SYMBOL and current_map[row][col] != VISITED_CELL_SYMBOL
+
+
+def is_clear_cell(row, col):
+	return (
+		row >= 0
+		and row < len(current_map)
+		and col >= 0
+		and col < len(current_map[0])
+		and current_map[row][col] != WALL_SYMBOL
+	)
+
 
 def generate_adjacent_cells(agent_row, agent_col):
 
@@ -58,7 +69,7 @@ def generate_adjacent_cells(agent_row, agent_col):
 		( 0, 1), # right
 		(-1, 0), # above
 		( 1, 0), # below
-		(-1, -1), # above-left
+		(-1, -1), # above-leftwhat 
 		(-1, 1), # above-right
 		(1, -1), # below-left
 		( 1, 1),  # below-right
@@ -72,6 +83,25 @@ def generate_adjacent_cells(agent_row, agent_col):
 		adjacent_cells_col.append(agent_col + col_offset)
 
 	return adjacent_cells_row, adjacent_cells_col
+
+def is_valid_diagonal(agent_row, agent_col, next_row, next_col):
+	row_offset = next_row - agent_row
+	col_offset = next_col - agent_col
+
+	if row_offset == 0 or col_offset == 0:
+		return True
+
+	straight_row_ok = is_clear_cell(agent_row + row_offset, agent_col)
+	straight_col_ok = is_clear_cell(agent_row, agent_col + col_offset)
+
+	return straight_row_ok and straight_col_ok
+
+
+def valid_move(agent_row, agent_col, next_row, next_col):
+	return (
+		valid_cell(next_row, next_col)
+		and is_valid_diagonal(agent_row, agent_col, next_row, next_col)
+	)
 
 def BFS(agent_start_row, agent_start_col):
 	#Add the initial position of the agent to queue
@@ -93,7 +123,7 @@ def BFS(agent_start_row, agent_start_col):
 		if agent_row == goal_coord[0] and agent_col == goal_coord[1]:
 			print_map()
 			return True
-		
+
 		# Calculate the position of agent adjacent cells for exploration
 		adjacent_cells = generate_adjacent_cells(agent_row, agent_col)
 		adjacent_cells_row = adjacent_cells[0]
@@ -102,7 +132,7 @@ def BFS(agent_start_row, agent_start_col):
 		# Check if the adjacent cells are valid (not wall and not visited before) and add them to the queue for further search
 
 		for i in range(len(adjacent_cells_row)):
-			if valid_cell(adjacent_cells_row[i], adjacent_cells_col[i]) and current_map[adjacent_cells_row[i]][adjacent_cells_col[i]] is not EXPANDED_NOT_VISITED_CELL_SYMBOL:
+			if valid_move(agent_row, agent_col, adjacent_cells_row[i], adjacent_cells_col[i]) and current_map[adjacent_cells_row[i]][adjacent_cells_col[i]] != EXPANDED_NOT_VISITED_CELL_SYMBOL:
 				current_map[adjacent_cells_row[i]][adjacent_cells_col[i]] = EXPANDED_NOT_VISITED_CELL_SYMBOL
 				Q.put([adjacent_cells_row[i], adjacent_cells_col[i]])
 
@@ -128,7 +158,7 @@ def DFS(agent_row, agent_col):
 
 	# Set the status of adjacent cells of agent to expanded and not visited
 	for i in range(len(adjacent_cells_row)):
-		if valid_cell(adjacent_cells_row[i],adjacent_cells_col[i]):
+		if valid_move(agent_row, agent_col, adjacent_cells_row[i], adjacent_cells_col[i]):
 			current_map[adjacent_cells_row[i]][adjacent_cells_col[i]] = EXPANDED_NOT_VISITED_CELL_SYMBOL
 
 	print_map()
@@ -138,7 +168,7 @@ def DFS(agent_row, agent_col):
 	current_map[agent_row][agent_col] = VISITED_CELL_SYMBOL
 	for i in range(len(adjacent_cells_row)):
 		#Check if the adjacent cell is not visited before and not wall
-		if valid_cell(adjacent_cells_row[i],adjacent_cells_col[i]):
+		if valid_move(agent_row, agent_col, adjacent_cells_row[i], adjacent_cells_col[i]):
 			# Move the agent to the new adjacent cell and change its status
 			current_map[adjacent_cells_row[i]][adjacent_cells_col[i]] = AGENT_SYMBOL
 			# Run DFS for the new state recursively

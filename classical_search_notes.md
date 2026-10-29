@@ -6,6 +6,6 @@
 
 (iv) Implement BFS and run it. Which algorithm finds the goal earlier, i.e. less expansions? - DFS was quicker, it took 22 expansions, wheras BFS took 24.
 
-(v) Change the code in a way that the agent can move into diagonal cells (you can consider any orders for the expansion). 
+(v) Change the code in a way that the agent can move into diagonal cells (you can consider any orders for the expansion). - Created two new funcitons: is_valid_diagonal to check if there was a diagonal that isn't a wall. And valid_move to determine if the move can be completed
 
-(vi) How could you reduce the number of expansions that the DFS algorithm requires to find the goal? What is the lowest number of cell expansions you could achieve with DFS until the agent finds the goal? Explain your solution.
+(vi) How could you reduce the number of expansions that the DFS algorithm requires to find the goal? What is the lowest number of cell expansions you could achieve with DFS until the agent finds the goal? Explain your solution. - Repeated expansions can be reduced by creating a visited hashset and appending each visited position to the set.
